@@ -1,0 +1,15 @@
+bin/
+obj/
+out/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.log
+DBServersManagerSetup.exe
+*.pdb
+*.cache
+
+# GitHub Workflows
+.github/
