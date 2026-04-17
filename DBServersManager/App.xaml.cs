@@ -11,15 +11,17 @@ namespace DBServersManager;
 public partial class App : System.Windows.Application
 {
     private static Mutex? _singleInstanceMutex;
+    private static bool _ownsMutex;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         const string mutexName = "Global\\DBServersManagerSingleInstance";
 
-        bool createdNew;
-        _singleInstanceMutex = new Mutex(true, mutexName, out createdNew);
-        if (!createdNew)
+        _singleInstanceMutex = new Mutex(true, mutexName, out _ownsMutex);
+        if (!_ownsMutex)
         {
+            _singleInstanceMutex.Dispose();
+            _singleInstanceMutex = null;
             System.Windows.MessageBox.Show(
                 "Another instance of DB Servers Manager is already running.\nOnly one instance is allowed.",
                 "Instance already running",
@@ -61,7 +63,8 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _singleInstanceMutex?.ReleaseMutex();
+        if (_ownsMutex)
+            _singleInstanceMutex?.ReleaseMutex();
         _singleInstanceMutex?.Dispose();
         _singleInstanceMutex = null;
         base.OnExit(e);
