@@ -1,6 +1,6 @@
 ﻿#define MyAppName "DB Servers Manager"
 #define MyAppVersion "1.0.2"
-#define MyAppPublisher "Anson Nguyen"
+#define MyAppPublisher "AnsCodeLab"
 #define MyAppExeName "DBServersManager.exe"
 #define SourceDir "..\publish\v1.0.2"
 #define OutputDir "..\publish"
