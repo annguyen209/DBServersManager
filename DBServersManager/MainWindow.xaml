@@ -298,7 +298,13 @@
                             Style="{StaticResource ActionButton}"
                             Background="#1565C0"
                             Width="120" Height="36" Padding="0"
+                            Margin="0,0,8,0"
                             Click="RefreshButton_OnClick"/>
+                    <Button Content="Quit"
+                            Style="{StaticResource ActionButton}"
+                            Background="#4A1A1A"
+                            Width="80" Height="36" Padding="0"
+                            Click="QuitButton_OnClick"/>
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -598,6 +604,11 @@
                 <TextBlock Text="AnsCodeLab"
                            Foreground="#5AAEE0" FontSize="12"
                            DockPanel.Dock="Right"/>
+                <TextBlock x:Name="AdminWarningText"
+                           Text="Not running as Administrator. Service control disabled."
+                           Foreground="#F5A623" FontSize="12" FontWeight="SemiBold"
+                           DockPanel.Dock="Right" Margin="0,0,16,0"
+                           Visibility="Collapsed"/>
                 <Ellipse Width="8" Height="8" Fill="#3FA7FF"
                          DockPanel.Dock="Left" Margin="0,0,8,0" VerticalAlignment="Center"/>
                 <TextBlock x:Name="StatusText" Text="Ready"

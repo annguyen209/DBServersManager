@@ -1,8 +1,8 @@
 ﻿#define MyAppName "DB Servers Manager"
-#define MyAppVersion "1.0.2"
+#define MyAppVersion "1.0.3"
 #define MyAppPublisher "AnsCodeLab"
 #define MyAppExeName "DBServersManager.exe"
-#define SourceDir "..\publish\v1.0.2"
+#define SourceDir "..\publish\v1.0.3"
 #define OutputDir "..\publish"
 
 [Setup]

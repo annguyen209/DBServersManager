@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 using System.Threading;
 using System.Windows;
 
@@ -13,8 +15,44 @@ public partial class App : System.Windows.Application
     private static Mutex? _singleInstanceMutex;
     private static bool _ownsMutex;
 
+    public static bool IsAdmin { get; private set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
+        if (!IsAdmin)
+        {
+            var result = System.Windows.MessageBox.Show(
+                "Administrator privileges are required to start, stop, or restart services.\n\nRestart as Administrator?",
+                "Elevation Required",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule!.FileName,
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    });
+                    Shutdown();
+                    return;
+                }
+                catch (Win32Exception)
+                {
+                    // User cancelled the UAC prompt — continue without elevation
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Failed to restart as Administrator: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         const string mutexName = "Global\\DBServersManagerSingleInstance";
 
         _singleInstanceMutex = new Mutex(true, mutexName, out _ownsMutex);

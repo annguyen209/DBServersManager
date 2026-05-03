@@ -40,6 +40,7 @@ public partial class MainWindow : Window
 
             InitializeFilterControls();
             LoadStartupPreference();
+            AdminWarningText.Visibility = App.IsAdmin ? Visibility.Collapsed : Visibility.Visible;
             _initialized = true;
             _ = RefreshServicesAsync();
         }
@@ -172,6 +173,15 @@ public partial class MainWindow : Window
             await Task.Run(() => ExecuteServiceAction(serviceName, action));
             SetStatus($"{action} completed for {serviceName}.");
             await RefreshServicesAsync();
+        }
+        catch (InvalidOperationException ex) when (ex.InnerException is Win32Exception { NativeErrorCode: 5 })
+        {
+            SetStatus($"{action} failed for {serviceName}.");
+            WpfMessageBox.Show(
+                "Access denied. Please run the app as Administrator to manage service states.",
+                "Permission Required",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
         }
         catch (InvalidOperationException ex)
         {
@@ -525,6 +535,11 @@ public partial class MainWindow : Window
     private async void RefreshButton_OnClick(object sender, RoutedEventArgs e)
     {
         await RefreshServicesAsync();
+    }
+
+    private void QuitButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        ExitApplication();
     }
 
     private void SearchTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
